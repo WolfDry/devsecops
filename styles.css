@@ -49,7 +49,7 @@ h1 {
 }
 
 .task-item.actions button {
-    background-color: transparent;
+    background-color: #b7ffe9;
     border: none;
     cursor: pointer;
     margin-left: 10px;
