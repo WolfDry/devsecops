@@ -36,6 +36,10 @@ h1 {
     align-items: center;
 }
 
+.task-item:hover{
+    background-color: #ffb0b050;
+}
+
 .task-item.completed {
     background-color: #570303;
 }
