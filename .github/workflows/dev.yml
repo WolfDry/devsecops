@@ -21,7 +21,7 @@ jobs:
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
       - name: Get preview url
         run: URL=$(vercel --token ${{ secrets.VERCEL_TOKEN }})
-             echo $URL
+             echo "URL=$URL" >> $GITHUB_ENV
       - name: Create pull request
         run: |
           curl \
