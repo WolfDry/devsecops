@@ -18,12 +18,15 @@ jobs:
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy Project Artifacts to Vercel
-        run: URL="$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})"
-             echo "URL=$URL" >> $GITHUB_ENV
+        run: |
+          URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "URL=$URL" >> $GITHUB_ENV
       - name: Create pull request
+        env:
+          URL: ${{ env.URL }}
         run: |
           curl \
             -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/pulls \
-            -d "{\"title\":\"Add deployment URLs\",\"body\":\"Preview URL: $URL \nProduction URL: https://dev-sec-ops-fawn.vercel.app\",\"head\":\"${{ github.ref }}\",\"base\":\"main\"}" \
+            -d "{\"title\":\"Add deployment URLs\",\"body\":\"Preview URL: $URL \nProduction URL: https://dev-sec-ops-fawn.vercel.app\",\"head\":\"${{ github.ref }}\",\"base\":\"main\"}"
