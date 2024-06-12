@@ -25,4 +25,4 @@ jobs:
             -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/pulls \
-            -d '{"title":"Amazing new pull request","body":"Please pull these awesome changes in!","head\":\"${{ github.ref }}\","base":"main"}'
+            -d '{"title":"Amazing new pull request","body":"Please pull these awesome changes in!","head":"${{ github.ref }}","base":"main"}'
