@@ -21,12 +21,26 @@ jobs:
         run: |
           URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           echo "URL=$URL" >> $GITHUB_ENV
+      - name: Check for existing pull request
+        id: check_pr
+        if: github.ref == 'refs/heads/pull-request'
+        run: |
+          PR_EXIST=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -X GET https://api.github.com/repos/${{ github.repository }}/pulls?state=open | jq -r '.[] | select(.head.ref == "pull-request") | .number')
+          echo "PR_EXIST=$PR_EXIST" >> $GITHUB_ENV
       - name: Create pull request
         env:
           URL: ${{ env.URL }}
+          PR_EXIST: ${{ env.PR_EXIST }}
         run: |
-          curl \
-            -X POST \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/${{ github.repository }}/pulls \
-            -d "{\"title\":\"Add deployment URLs\",\"body\":\"Preview URL: $URL \nProduction URL: https://dev-sec-ops-fawn.vercel.app\",\"head\":\"${{ github.ref }}\",\"base\":\"main\"}"
+          if [ -z "$PR_EXIST" ]; then 
+            curl \
+              -X POST \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              https://api.github.com/repos/${{ github.repository }}/pulls \
+              -d "{\"title\":\"Add deployment URLs\",\"body\":\"Preview URL: $URL \nProduction URL: https://dev-sec-ops-fawn.vercel.app\",\"head\":\"${{ github.ref }}\",\"base\":\"main\"}"
+          else
+            curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d "{\"body\":\"Preview URL: $URL \n Production URL: https://dev-sec-ops-fawn.vercel.app\"}" \
+            https://api.github.com/repos/${{ github.repository }}/issues/$PR_EXIST/comments
+          fi
