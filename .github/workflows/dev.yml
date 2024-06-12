@@ -18,7 +18,7 @@ jobs:
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy Project Artifacts to Vercel
-        run: URL="$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+        run: URL="$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})"
              echo "URL=$URL" >> $GITHUB_ENV
       - name: Create pull request
         run: |
